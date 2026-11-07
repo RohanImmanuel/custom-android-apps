@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- the app's big play/pause button: blue disc with a play triangle and pause bars. Kept inside the 66dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FF4C8DFF"
+        android:pathData="M54,26a28,28 0 1,0 0.01,0z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M40,42 L40,66 L55,54 Z M58,42 L62.5,42 L62.5,66 L58,66 Z M66,42 L70.5,42 L70.5,66 L66,66 Z" />
+</vector>

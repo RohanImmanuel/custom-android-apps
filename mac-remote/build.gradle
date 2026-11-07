@@ -1,0 +1,33 @@
+plugins { id 'com.android.application' version '8.13.0' }
+
+// Pairing comes from the Mac at build time and is never committed:
+//   token + certificate: ~/.mac-remote/ (created by `python3 mac/remote.py` on first run)
+//   Mac address: `macremote.host` in local.properties, else the Mac's current Wi-Fi IP
+def pairDir = new File(System.getProperty('user.home'), '.mac-remote')
+def tokenFile = new File(pairDir, 'token'), certFile = new File(pairDir, 'cert.pem')
+if (!tokenFile.exists() || !certFile.exists())
+    throw new GradleException("No pairing in ${pairDir}. Run `python3 mac/remote.py` once on the Mac first.")
+def props = new Properties()
+def lp = file('local.properties'); if (lp.exists()) lp.withInputStream { props.load(it) }
+def host = props.getProperty('macremote.host') ?: providers.exec { commandLine 'ipconfig', 'getifaddr', 'en0' }.standardOutput.asText.get().trim()
+def der = certFile.text.replaceAll(/-----[^-]+-----/, '').replaceAll(/\s/, '').decodeBase64()
+def certSha256 = java.security.MessageDigest.getInstance('SHA-256').digest(der).encodeHex().toString()
+
+android {
+    namespace 'com.rohan.macremote'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.rohan.macremote'
+        minSdk 33
+        targetSdk 36
+        versionCode 1
+        versionName '1.0'
+        buildConfigField 'String', 'MAC_URL', "\"https://${host}:8765/?t=${tokenFile.text.trim()}\""
+        buildConfigField 'String', 'CERT_SHA256', "\"${certSha256}\""
+    }
+    buildFeatures { buildConfig true }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

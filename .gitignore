@@ -7,3 +7,6 @@ mono-lines/tools/svg/
 mono-lines/src/main/res/drawable-nodpi/
 mono-lines/src/main/res/xml/
 mono-lines/src/main/assets/
+# mac-remote: built Mac app and its machine-specific start-at-login file
+mac-remote/mac/MacRemote.app/
+mac-remote/mac/local.mac-remote.plist
