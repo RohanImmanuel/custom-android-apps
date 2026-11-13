@@ -21,7 +21,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         web = new WebView(this);
-        web.setBackgroundColor(Color.parseColor("#111111"));
+        web.setBackgroundColor(Color.parseColor("#0a0b0e"));
         web.getSettings().setJavaScriptEnabled(true);
         web.setWebViewClient(new WebViewClient() {
             // The Mac uses a self-signed cert. Trust it only if it is exactly the one pinned at build time.
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         });
         // Android 15+ draws edge-to-edge; pad so buttons don't sit under the status/nav bars.
         FrameLayout root = new FrameLayout(this);
-        root.setBackgroundColor(Color.parseColor("#111111"));
+        root.setBackgroundColor(Color.parseColor("#0a0b0e"));
         root.addView(web);
         root.setOnApplyWindowInsetsListener((v, ins) -> {
             // include the keyboard so the page shrinks above it instead of hiding behind it
@@ -66,6 +66,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        web.resumeTimers();
         web.loadUrl(BuildConfig.MAC_URL);  // re-auth + fresh page each time the app is opened
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        web.pauseTimers();  // no status pings while the app is in the background
     }
 }

@@ -11,7 +11,7 @@ Couch remote for a Mac that's driving a TV or monitor: big media buttons, the Ma
 - **Volume**: drag the slider to set the Mac's level, or use −/+ and mute. The **phone's volume keys** control the Mac too.
 - **Row**: previous and next tab, back, fullscreen, Esc.
 - **Touchpad**: drag to move, tap to click, and two fingers to scroll. A two-finger tap right-clicks, and there are Left click and Right click buttons below the pad. Tune `SPEED` and `SCROLL` in `mac/remote.py`.
-- **D-pad**: arrow keys with OK = Enter, plus Prev/Next link (Shift-Tab/Tab) to jump between links.
+- **D-pad**: arrow keys with OK = Enter, plus Prev/Next link (Shift-Tab/Tab) to jump between links and Esc. The pressed side of the ring lights up.
 - **Keys**: whatever you send gets typed on the Mac, with Delete, Space, Enter, Tab and Left/Right keys. While the phone keyboard is open, the screen shrinks to just this card.
 - The bottom card switches between **Touchpad**, **D-pad** and **Keys**, and the phone remembers your choice.
 - **Hold to repeat**: hold volume, rewind, forward, the arrows or the link buttons and they keep firing.
@@ -46,7 +46,7 @@ On the phone (USB debugging on, from this folder):
 ./gradlew installDebug
 ```
 
-The app is built for the Mac's current Wi-Fi IP. To pin a different address, put `macremote.host=<ip or name>` in `local.properties`. Reserving the Mac's IP in your router keeps the app working across reboots.
+The app finds the Mac by its Bonjour name (`<LocalHostName>.local`), so it keeps working when the router hands the Mac a new IP. To use a fixed address instead, put `macremote.host=<ip or name>` in `local.properties`.
 
 ## Revoking access
 

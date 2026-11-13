@@ -364,16 +364,27 @@ svg{width:24px;height:24px;fill:currentColor;flex:none}
 .clicks button{height:46px;border-radius:14px;flex-direction:row;font-size:14px;color:#d5d8de}
 
 .dwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:0}
-.dpad{width:min(220px,60vw,34vh);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 35%,#252931,var(--btn));display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);box-shadow:inset 0 0 0 1px var(--line),0 8px 24px #0006;touch-action:none}
-.dpad button{background:transparent;border-radius:50%;color:#d5d8de}
-.dpad button.held{background:#ffffff12;transform:scale(.9)}
-.dpad svg{width:30px;height:30px}
+.dpad{--w:-45deg;position:relative;width:min(280px,78vw,40vh);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 50% 30%,#2a2e37,#191c22 70%);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);box-shadow:inset 0 1px 0 #ffffff14,inset 0 0 0 1px var(--line),0 14px 34px #0008;touch-action:none}
+/* ring-shaped layers: ::before = glow on the pressed side, ::after = seams between the four segments */
+.dpad::before,.dpad::after{content:'';position:absolute;inset:0;border-radius:50%;pointer-events:none;-webkit-mask:radial-gradient(circle,transparent 31%,#000 32%);mask:radial-gradient(circle,transparent 31%,#000 32%)}
+.dpad::before{background:conic-gradient(from var(--w),#4c8dff10,#4c8dff55 45deg,#4c8dff10 90deg,transparent 0);opacity:0;transition:opacity .12s}
+.dpad::after{background:repeating-conic-gradient(from 45deg,#ffffff14 0 .6deg,transparent .6deg 90deg)}
+.dpad:has(.u.held)::before{--w:-45deg}.dpad:has(.r.held)::before{--w:45deg}.dpad:has(.d.held)::before{--w:135deg}.dpad:has(.l.held)::before{--w:225deg}
+.dpad:has(.u.held,.r.held,.d.held,.l.held)::before{opacity:1}
+.dpad button{position:relative;z-index:1;background:transparent;border-radius:50%;color:#c3c7cf;transition:color .12s,transform .08s}
+.dpad button:not(.ok):active,.dpad button:not(.ok).held{background:transparent;color:#cfe0ff;transform:scale(.88)}
+.dpad svg{width:34px;height:34px}
 .dpad .u{grid-area:1/2}.dpad .l{grid-area:2/1}.dpad .r{grid-area:2/3}.dpad .d{grid-area:3/2}
-.dpad .ok{grid-area:2/2;margin:3px;background:linear-gradient(160deg,#5c9bff,var(--acc2));font-weight:700;font-size:15px;letter-spacing:.6px;color:#fff;box-shadow:0 6px 18px #4c8dff40}
-.dpad .ok.held,.dpad .ok:active{background:var(--acc2)}
-.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;flex:none}
-.pair button{height:46px;border-radius:14px;flex-direction:row;gap:8px;font-size:13.5px;color:#d5d8de}
+.dpad .ok{grid-area:2/2;margin:8%;background:linear-gradient(160deg,#5c9bff,var(--acc2));font-weight:700;font-size:16px;letter-spacing:.8px;color:#fff;box-shadow:0 0 0 6px #14161b,0 0 0 7px var(--line),0 8px 22px #4c8dff50,inset 0 1px 0 #ffffff40}
+.dpad .ok.held,.dpad .ok:active{background:var(--acc2);transform:scale(.94)}
+.pair{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;width:100%;flex:none}
+.pair button{height:48px;border-radius:14px;flex-direction:row;gap:8px;font-size:13.5px;color:#d5d8de}
 .pair button svg{width:18px;height:18px}
+.pair .esc{width:76px;font-weight:650;letter-spacing:.4px}
+.tint{background:#4c8dff26;color:#cfe0ff}
+/* Mac unreachable: grey out controls so taps don't silently vanish */
+body.offline .media,body.offline .nav,body.offline .ctl{opacity:.4;pointer-events:none;transition:opacity .3s}
+.top{cursor:pointer}
 
 .kb{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0}
 .field{display:flex;align-items:center;background:var(--bg);border-radius:16px;padding:0 6px 0 16px;box-shadow:inset 0 0 0 1px var(--line);flex:none}
@@ -385,7 +396,6 @@ input::placeholder{color:var(--dim)}
 .keys{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:minmax(48px,1fr);gap:8px;max-height:150px}
 .keys button{border-radius:14px;flex-direction:row;gap:7px;font-size:13.5px;color:#d5d8de}
 .keys button svg{width:20px;height:20px}
-.keys .enter{background:#4c8dff26;color:#cfe0ff}
 /* phone keyboard open: keep only the focused window and the Keys card */
 @media (max-height:600px){.media,.nav{display:none}.keys{max-height:none}}
 .sent{text-align:center;font-size:12px;color:var(--ok);height:14px;opacity:0;transition:opacity .2s;flex:none}
@@ -414,9 +424,9 @@ input::placeholder{color:var(--dim)}
 </section>
 
 <section class="card nav">
-  <button data-a="prevtab" aria-label="Previous tab"><svg viewBox="0 0 24 24"><path d="M18.4 7.4 17 6l-6 6 6 6 1.4-1.4-4.6-4.6zm-6 0L11 6l-6 6 6 6 1.4-1.4L7.8 12z"/></svg><small>Tab</small></button>
+  <button data-a="prevtab" aria-label="Previous tab"><svg viewBox="0 0 24 24"><path d="M18.4 7.4 17 6l-6 6 6 6 1.4-1.4-4.6-4.6zm-6 0L11 6l-6 6 6 6 1.4-1.4L7.8 12z"/></svg><small>Prev tab</small></button>
   <button data-a="back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M20 11H7.8l5.6-5.6L12 4l-8 8 8 8 1.4-1.4L7.8 13H20z"/></svg><small>Back</small></button>
-  <button data-a="nexttab" aria-label="Next tab"><svg viewBox="0 0 24 24"><path d="m5.6 7.4 1.4-1.4 6 6-6 6-1.4-1.4 4.6-4.6zm6 0L13 6l6 6-6 6-1.4-1.4 4.6-4.6z"/></svg><small>Tab</small></button>
+  <button data-a="nexttab" aria-label="Next tab"><svg viewBox="0 0 24 24"><path d="m5.6 7.4 1.4-1.4 6 6-6 6-1.4-1.4 4.6-4.6zm6 0L13 6l6 6-6 6-1.4-1.4 4.6-4.6z"/></svg><small>Next tab</small></button>
   <button data-a="full" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M3 3h6v2H5v4H3zm12 0h6v6h-2V5h-4zM3 15h2v4h4v2H3zm16 0h2v6h-6v-2h4z"/></svg><small>Full</small></button>
   <button data-a="esc" aria-label="Escape"><svg viewBox="0 0 24 24"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4l5.6 5.6L5 17.6 6.4 19l5.6-5.6 5.6 5.6 1.4-1.4-5.6-5.6z"/></svg><small>Esc</small></button>
 </section>
@@ -448,6 +458,7 @@ input::placeholder{color:var(--dim)}
       </div>
       <div class="pair">
         <button data-a="shtab" data-rep><svg viewBox="0 0 24 24"><path d="M4 6h2v12H4zm4 6 7-6v4h5v4h-5v4z"/></svg>Prev link</button>
+        <button class="esc tint" data-a="esc" aria-label="Escape">Esc</button>
         <button data-a="tab" data-rep>Next link<svg viewBox="0 0 24 24"><path d="M18 6h2v12h-2zm-2 6-7 6v-4H4v-4h5V6z"/></svg></button>
       </div>
     </div>
@@ -461,7 +472,7 @@ input::placeholder{color:var(--dim)}
       <div class="keys">
         <button data-a="bksp" data-rep><svg viewBox="0 0 24 24"><path d="M22 4H8l-7 8 7 8h14zm-2 2v12H8.9l-5.2-6 5.2-6zm-9.6 2L9 9.4l2.6 2.6L9 14.6l1.4 1.4 2.6-2.6 2.6 2.6 1.4-1.4-2.6-2.6 2.6-2.6L15.6 8 13 10.6z"/></svg>Delete</button>
         <button data-a="space" data-rep>Space</button>
-        <button class="enter" data-a="enter"><svg viewBox="0 0 24 24"><path d="M19 7v4H5.8l3.6-3.6L8 6l-6 6 6 6 1.4-1.4L5.8 13H21V7z"/></svg>Enter</button>
+        <button class="tint" data-a="enter"><svg viewBox="0 0 24 24"><path d="M19 7v4H5.8l3.6-3.6L8 6l-6 6 6 6 1.4-1.4L5.8 13H21V7z"/></svg>Enter</button>
         <button data-a="left" data-rep><svg viewBox="0 0 24 24"><path d="M15.4 16.6 10.8 12l4.6-4.6L14 6l-6 6 6 6z"/></svg>Left</button>
         <button data-a="tab" data-rep>Tab<svg viewBox="0 0 24 24"><path d="M18 6h2v12h-2zm-2 6-7 6v-4H4v-4h5V6z"/></svg></button>
         <button data-a="right" data-rep>Right<svg viewBox="0 0 24 24"><path d="M8.6 16.6 13.2 12 8.6 7.4 10 6l6 6-6 6z"/></svg></button>
@@ -484,6 +495,7 @@ const store = { get: k => { try { return localStorage.getItem(k); } catch (e) { 
 let online = null;
 function status(ok) {
   if (ok === online) return; online = ok;
+  document.body.classList.toggle('offline', !ok);
   $('dot').className = 'dot ' + (ok ? 'on' : 'off');
   if (!ok) { $('fa').textContent = 'Mac offline'; $('fw').textContent = 'Is the Mac awake and Mac Remote running?'; $('av').firstChild.textContent = '!'; $('av').style.background = '#5a2328'; $('fs').className = 'badge none'; }
 }
@@ -515,6 +527,7 @@ const ping = () => document.visibilityState === 'visible' && post({a:'ping'}).th
 let pingSoon = 0;
 const refresh = () => { clearTimeout(pingSoon); pingSoon = setTimeout(ping, 150); };
 ping(); setInterval(ping, 2000); document.addEventListener('visibilitychange', ping);
+document.querySelector('.top').onclick = () => { buzz(); ping(); };  // tap to retry now
 
 const slider = $('slider');
 let volSending = false, volWant = null;
@@ -544,7 +557,7 @@ document.querySelectorAll('[data-a]').forEach(b => {
   const stop = () => { clearTimeout(delay); clearInterval(timer); b.classList.remove('held'); };
   b.addEventListener('pointerdown', e => {
     e.preventDefault(); b.setPointerCapture(e.pointerId); b.classList.add('held'); buzz(); tick();
-    delay = setTimeout(() => { timer = setInterval(tick, 140); }, 400);
+    delay = setTimeout(() => { timer = setInterval(() => { navigator.vibrate && navigator.vibrate(6); tick(); }, 140); }, 400);
   });
   ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(ev => b.addEventListener(ev, stop));
   b.addEventListener('contextmenu', e => e.preventDefault());
@@ -577,6 +590,7 @@ mode(MODES.includes(store.get('mode')) ? store.get('mode') : 'pad');
 
 // touchpad: 1 finger moves/taps, 2 fingers scroll/tap = right click
 const pad = $('pad');
+if (store.get('padHint')) pad.classList.add('used');  // hint only until the pad is first used
 const pts = new Map(); // pointerId -> [x, y]
 let mx = 0, my = 0, sx = 0, sy = 0, moved = 0, multi = false, began = 0, sending = false;
 async function flush() {
@@ -592,7 +606,7 @@ pad.onpointerdown = e => {
   if (!pts.size) { moved = 0; multi = false; began = Date.now(); }
   pts.set(e.pointerId, [e.clientX, e.clientY]);
   if (pts.size > 1) multi = true;
-  pad.classList.add('down', 'used'); pad.setPointerCapture(e.pointerId);
+  pad.classList.add('down', 'used'); pad.setPointerCapture(e.pointerId); store.set('padHint', '1');
 };
 pad.onpointermove = e => {
   const last = pts.get(e.pointerId); if (!last) return;

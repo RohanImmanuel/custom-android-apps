@@ -2,14 +2,15 @@ plugins { id 'com.android.application' version '8.13.0' }
 
 // Pairing comes from the Mac at build time and is never committed:
 //   token + certificate: ~/.mac-remote/ (created by `python3 mac/remote.py` on first run)
-//   Mac address: `macremote.host` in local.properties, else the Mac's current Wi-Fi IP
+//   Mac address: `macremote.host` in local.properties, else the Mac's Bonjour name (<LocalHostName>.local),
+//   so a new DHCP IP doesn't break the app. The cert is pinned by fingerprint, so the name doesn't matter to TLS.
 def pairDir = new File(System.getProperty('user.home'), '.mac-remote')
 def tokenFile = new File(pairDir, 'token'), certFile = new File(pairDir, 'cert.pem')
 if (!tokenFile.exists() || !certFile.exists())
     throw new GradleException("No pairing in ${pairDir}. Run `python3 mac/remote.py` once on the Mac first.")
 def props = new Properties()
 def lp = file('local.properties'); if (lp.exists()) lp.withInputStream { props.load(it) }
-def host = props.getProperty('macremote.host') ?: providers.exec { commandLine 'ipconfig', 'getifaddr', 'en0' }.standardOutput.asText.get().trim()
+def host = props.getProperty('macremote.host') ?: (providers.exec { commandLine 'scutil', '--get', 'LocalHostName' }.standardOutput.asText.get().trim() + '.local')
 def der = certFile.text.replaceAll(/-----[^-]+-----/, '').replaceAll(/\s/, '').decodeBase64()
 def certSha256 = java.security.MessageDigest.getInstance('SHA-256').digest(der).encodeHex().toString()
 
